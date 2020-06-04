@@ -24,12 +24,17 @@ class FilmView(APIView):
 
 
 class GhibliFilmView(APIView):
+
     def get(self, request, uuid):
-        url = 'https://ghibliapi.herokuapp.com/films/ebbb6b7c-945c-41ee-a792-de0e43191bd8'
+        URL = 'https://ghibliapi.herokuapp.com/films/'
+        url = URL + str(uuid)
         response = requests.get(url)
         data = json.loads(response.text)
-        film = get_object_or_404(Film.objects.filter(uuid=uuid))
-        rusname = film.rusname
+        film = Film.objects.filter(uuid=uuid)
+        if film.exists():
+            rusname = film.rusname
+        else:
+            rusname = None
         data['rusname'] = rusname
         ghibliserializer = GhibliSerializer(data=data)
         ghibliserializer.is_valid()
